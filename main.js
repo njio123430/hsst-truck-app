@@ -6,8 +6,8 @@
 //
 // ******** จุดที่ 1: กรอกข้อมูลของมึงตรงนี้! ********
 //
-const LIFF_ID = "YOUR_LIFF_ID"; // เอา LIFF ID ที่ได้จาก LINE Developers Console มาใส่
-const POWER_AUTOMATE_URL = "YOUR_POWER_AUTOMATE_URL"; // เอา URL จาก Power Automate Step 2 มาใส่
+const LIFF_ID = "2008034667-YqmOVd9a"; // เอา LIFF ID ที่ได้จาก LINE Developers Console มาใส่
+const POWER_AUTOMATE_URL = "https://default648af3daaca240e888bfa8b999b0e4.58.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/77f81a5ddf584095bc3985ea3f805a6c/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WZx4dtj2R_rMoiXRKd88kwz8uAxEmqtAJ8GcAYheeFc"; // เอา URL จาก Power Automate Step 2 มาใส่
 
 // ---------------------------------------------------------------
 
@@ -125,3 +125,4 @@ async function saveData() {
         alert('เกิดข้อผิดพลาดในการเชื่อมต่อ! ไม่สามารถส่งข้อมูลได้');
     }
 }
+
