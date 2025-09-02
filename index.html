@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>ระบบบันทึกรถ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 
+        นี่คือส่วน Style Sheet ทำให้แอปหน้าตาดูดีขึ้น
+        ใช้ CSS ธรรมดา ไม่ต้องมี Framework อะไรให้วุ่นวาย
+    -->
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 95vh;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            flex-grow: 1;
+        }
+        h1 {
+            color: #1d1d1f;
+            text-align: center;
+            margin-top: 0;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #6e6e73;
+            font-weight: 600;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            background-color: #f5f5f7;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+        .btn-scan {
+            background-color: #06C755; /* สีเขียว LINE */
+        }
+        .btn-scan:active {
+            background-color: #05a546;
+        }
+        .btn-save {
+            background-color: #007AFF; /* สีน้ำเงิน */
+            margin-top: 25px;
+        }
+        .btn-save:active {
+            background-color: #005ecb;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #86868b;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>ระบบบันทึกรถเข้า</h1>
+
+        <!-- ส่วนของฟอร์ม -->
+        <div class="input-group">
+            <label for="reserveNoInput">เลขที่การจอง (Reserve No.)</label>
+            <input type="text" id="reserveNoInput" placeholder="กดปุ่มสแกนด้านล่าง..." readonly>
+            <button class="btn-scan" onclick="scanReserveNo()">1. สแกนเลขที่การจอง</button>
+        </div>
+
+        <div class="input-group">
+            <label for="carPlateInput">ทะเบียนรถ (Car Plate)</label>
+            <input type="text" id="carPlateInput" placeholder="กดปุ่มสแกนด้านล่าง..." readonly>
+            <button class="btn-scan" onclick="scanCarPlate()">2. สแกนทะเบียนรถ</button>
+        </div>
+        
+        <button class="btn-save" onclick="saveData()">บันทึกข้อมูล</button>
+    </div>
+
+    <div class="footer">
+        Powered by ไอ้เจิดปัญญาAI
+    </div>
+
+    <!-- ***** ส่วนสำคัญที่สุด! สั่งให้เว็บรู้จัก LIFF และโค้ดของเรา ***** -->
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="main.js"></script> 
+
+</body>
+</html>
