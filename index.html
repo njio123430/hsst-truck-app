@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แอปบันทึกข้อมูล รปภ.</title>
+    <title>แอปบันทึกข้อมูลรถ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;700&display=swap');
-        body { font-family: 'Kanit', sans-serif; }
+        body { font-family: sans-serif; }
         .btn { transition: transform 0.1s ease-in-out, background-color 0.2s ease; }
-        .btn:active { transform: scale(0.97); }
+        .btn:active { transform: scale(0.98); }
+        .input-group { display: flex; align-items: center; gap: 0.5rem; }
+        .input-field { flex-grow: 1; }
+        .scan-btn { flex-shrink: 0; }
     </style>
 </head>
 <body class="bg-gray-200">
@@ -32,38 +34,36 @@
         </div>
 
         <div id="main-content" class="hidden p-4 md:p-6">
-            
-            <!-- Home View: Buttons to choose action -->
-            <div id="home-view" class="text-center mt-8 space-y-4">
-                 <h2 class="text-xl font-bold text-gray-800 mb-6">กรุณาเลือกวิธีการบันทึก</h2>
-                <button id="manual-entry-btn" class="btn w-full max-w-xs mx-auto bg-white hover:bg-gray-50 border border-gray-300 text-gray-800 font-bold py-4 px-6 rounded-xl shadow-md text-xl">
-                    กรอกข้อมูลทะเบียนรถ
-                </button>
-                <button id="scan-btn" class="btn w-full max-w-xs mx-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg text-xl">
-                    สแกน QR Code
+            <div class="bg-white p-6 rounded-lg shadow-md space-y-5">
+                <!-- 1. & 2. Input and Scan for Reserve Truck -->
+                <div>
+                    <label for="reserve-input" class="block text-sm font-medium text-gray-700 mb-1">เลขรถ (ข้อมูลการจอง)</label>
+                    <div class="input-group">
+                        <input type="text" id="reserve-input" class="input-field w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg" placeholder="กรอกหรือสแกน">
+                        <button id="scan-reserve-btn" class="scan-btn btn bg-gray-600 hover:bg-gray-700 text-white font-bold p-3 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. & 4. Input and Scan for Plate -->
+                <div>
+                    <label for="plate-input" class="block text-sm font-medium text-gray-700 mb-1">ทะเบียนรถ</label>
+                    <div class="input-group">
+                        <input type="text" id="plate-input" class="input-field w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg" placeholder="กรอกหรือสแกน">
+                        <button id="scan-plate-btn" class="scan-btn btn bg-gray-600 hover:bg-gray-700 text-white font-bold p-3 rounded-md">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 5. Save Button -->
+                <button id="save-btn" class="btn w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-4 rounded-lg shadow-xl text-xl mt-4">
+                    ยืนยันข้อมูล
                 </button>
             </div>
 
-            <!-- Form View: To input or confirm data -->
-            <div id="form-view" class="hidden mt-4">
-                <h2 class="text-xl font-bold text-gray-800 text-center mb-4">บันทึกข้อมูลรถ</h2>
-                <div class="bg-white p-4 rounded-lg shadow-md space-y-4">
-                    <div>
-                        <label for="plate-input" class="block text-sm font-medium text-gray-700">ป้ายทะเบียนรถ</label>
-                        <input type="text" id="plate-input" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-lg">
-                    </div>
-                    <div>
-                        <label for="reserve-input" class="block text-sm font-medium text-gray-700">ข้อมูลการจอง / หมายเหตุ</label>
-                        <input type="text" id="reserve-input" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-lg" placeholder="(ถ้ามี)">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-3 mt-4">
-                    <button id="cancel-btn" class="btn w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-lg">ยกเลิก</button>
-                    <button id="save-btn" class="btn w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg">บันทึกข้อมูล</button>
-                </div>
-            </div>
-
-            <div id="status-log" class="mt-6 text-left bg-white p-3 rounded-lg shadow-sm">
+            <div id="status-log" class="mt-4 text-left bg-white p-3 rounded-lg shadow-sm">
                  <p class="font-semibold text-sm mb-1">สถานะล่าสุด:</p>
                  <p id="log-message" class="text-gray-600 text-sm">ยังไม่มีการดำเนินการ</p>
             </div>
@@ -74,7 +74,7 @@
         // ******** กรุณากรอกข้อมูลของคุณ ********
         const MY_LIFF_ID = '2008034667-YqmOVd9a'; 
         const SUPABASE_URL = 'https://ykctcctxpxvqveevvwdi.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrY3RjY3R4cHh2cXZlZXZ2d2RpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4MDA0NjEsImV4cCI6MjA3MjM3NjQ2MX0.FdaFL3dcbsnXAzskOWGtJ3o7qqdQk1jE4Ym70lROHYY';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrY3RjY3R4cHh2cXZlZXZ2d2RpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4MDA0NjEsImV4cCI6MjA3MjM3NjQ6MX0.FdaFL3dcbsnXAzskOWGtJ3o7qqdQk1jE4Ym70lROHYY';
         // ************************************
 
         // --- UI Elements ---
@@ -82,8 +82,6 @@
         const statusMessage = document.getElementById('status-message');
         const header = document.getElementById('header');
         const mainContent = document.getElementById('main-content');
-        const homeView = document.getElementById('home-view');
-        const formView = document.getElementById('form-view');
         const logMessage = document.getElementById('log-message');
         const plateInput = document.getElementById('plate-input');
         const reserveInput = document.getElementById('reserve-input');
@@ -91,14 +89,13 @@
         let userProfile = null;
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // --- Main App Logic ---
         document.addEventListener('DOMContentLoaded', main);
 
         async function main() {
             try {
                 await liff.init({ liffId: MY_LIFF_ID });
                 if (!liff.isLoggedIn()) {
-                    liff.login();
+                    liff.login(); 
                     return;
                 }
                 userProfile = await liff.getProfile();
@@ -107,7 +104,6 @@
             } catch (error) {
                 console.error('LIFF Init Error:', error);
                 statusMessage.textContent = `เกิดข้อผิดพลาด: ${error.message}`;
-                statusMessage.classList.add('text-red-500');
             }
         }
 
@@ -117,62 +113,46 @@
             loadingState.classList.add('hidden');
             header.classList.remove('hidden');
             mainContent.classList.remove('hidden');
-            updateLog('ระบบพร้อมใช้งาน กรุณาเลือกวิธีการบันทึก');
+            updateLog('ระบบพร้อมใช้งาน');
         }
-
+        
         function updateLog(message, isError = false) {
             logMessage.textContent = message;
             logMessage.classList.toggle('text-red-500', isError);
             logMessage.classList.toggle('text-green-600', !isError);
         }
 
-        function showForm(plateValue = '') {
-            plateInput.value = plateValue;
-            reserveInput.value = '';
-            homeView.classList.add('hidden');
-            formView.classList.remove('hidden');
-            updateLog('กรุณาตรวจสอบและกรอกข้อมูลให้ครบถ้วน');
+        async function scanAndFill(targetInput) {
+            if (!liff.isInClient()) {
+                alert("ฟังก์ชันสแกนสามารถใช้งานได้เมื่อเปิดผ่านแอปพลิเคชัน LINE เท่านั้น");
+                targetInput.value = "TEST_FROM_BROWSER";
+                return;
+            }
+            try {
+                updateLog('กำลังเปิดกล้อง...');
+                const result = await liff.scanCodeV2();
+                if (result && result.value) {
+                    targetInput.value = result.value;
+                    updateLog(`สแกนข้อมูล '${result.value}' สำเร็จ`);
+                } else {
+                    updateLog('ยกเลิกการสแกน');
+                }
+            } catch (error) {
+                console.error('Scan Error:', error);
+                updateLog(`เกิดข้อผิดพลาดในการสแกน: ${error.message}`, true);
+            }
         }
 
-        function showHome() {
-            homeView.classList.remove('hidden');
-            formView.classList.add('hidden');
-            updateLog('ยกเลิกรายการล่าสุด');
-        }
-
-        // --- Event Listeners ---
         function setupEventListeners() {
-            document.getElementById('manual-entry-btn').addEventListener('click', () => {
-                showForm();
-            });
-
-            document.getElementById('scan-btn').addEventListener('click', async () => {
-                if (!liff.isInClient()) {
-                    alert('สามารถใช้งานฟังก์ชันสแกนได้ในแอป LINE เท่านั้น');
-                    return;
-                }
-                try {
-                    updateLog('กำลังเปิดกล้อง...');
-                    const result = await liff.scanCodeV2();
-                    if (result && result.value) {
-                        showForm(result.value);
-                    } else {
-                        updateLog('ยกเลิกการสแกน');
-                    }
-                } catch (error) {
-                    console.error('Scan Error:', error);
-                    updateLog(`เกิดข้อผิดพลาดในการสแกน: ${error.message}`, true);
-                }
-            });
-
-            document.getElementById('cancel-btn').addEventListener('click', showHome);
+            document.getElementById('scan-reserve-btn').addEventListener('click', () => scanAndFill(reserveInput));
+            document.getElementById('scan-plate-btn').addEventListener('click', () => scanAndFill(plateInput));
 
             document.getElementById('save-btn').addEventListener('click', async () => {
                 const plateValue = plateInput.value.trim();
                 const reserveValue = reserveInput.value.trim();
 
-                if (!plateValue) {
-                    alert('กรุณากรอกข้อมูลป้ายทะเบียนรถ');
+                if (!plateValue && !reserveValue) {
+                    alert('กรุณากรอกข้อมูลอย่างน้อย 1 ช่อง');
                     return;
                 }
 
@@ -182,16 +162,15 @@
                 try {
                     const { data, error } = await supabaseClient.functions.invoke('save-plate-data', {
                         body: { 
-                            plate: plateValue,
+                            plate: plateValue || null, // Send null if empty
                             createBy: userProfile.displayName,
-                            reserveTruck: reserveValue
+                            reserveTruck: reserveValue || null // Send null if empty
                         }
                     });
 
                     if (error) throw error;
                     
-                    updateLog(`บันทึกทะเบียน ${plateValue} สำเร็จ!`, false);
-                    showHome();
+                    updateLog(`บันทึกข้อมูลสำเร็จ!`, false);
                     plateInput.value = '';
                     reserveInput.value = '';
 
