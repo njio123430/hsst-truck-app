@@ -56,29 +56,29 @@
 
     <!-- The actual logic is here -->
     <script>
-        // ******** จุดที่มึงต้องแก้ (ทั้งหมด 3 ที่) ********
+        // ******** กรุณากรอกข้อมูลของคุณ (ทั้งหมด 3 ที่) ********
 
-        // 1. ใส่ LIFF ID ของมึงที่ได้จาก LINE Developers Console
+        // 1. ใส่ LIFF ID ของคุณที่ได้จาก LINE Developers Console
         const MY_LIFF_ID = 'YOUR_LIFF_ID_HERE'; 
         
-        // 2. ใส่ URL ของโปรเจกต์ Supabase ของมึง
+        // 2. ใส่ URL ของโปรเจกต์ Supabase ของคุณ
         const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';
         
-        // 3. ใส่ Anon Key (public) ของโปรเจกต์ Supabase ของมึง
+        // 3. ใส่ Anon Key (public) ของโปรเจกต์ Supabase ของคุณ
         const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
         
         // *******************************************************
 
 
-        // --- ไม่ต้องแก้โค้ดข้างล่างนี้แล้ว ---
+        // --- ไม่ต้องแก้ไขโค้ดด้านล่างนี้ ---
         
         const loadingState = document.getElementById('loading-state');
         const profileState = document.getElementById('profile-state');
         const statusMessage = document.getElementById('status-message');
 
-        // เช็คก่อนว่ามึงกรอกข้อมูลครบยัง
+        // ตรวจสอบว่าผู้ใช้กรอกข้อมูลครบถ้วนหรือไม่
         if (MY_LIFF_ID === 'YOUR_LIFF_ID_HERE' || SUPABASE_URL === 'YOUR_SUPABASE_URL_HERE' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY_HERE') {
-            statusMessage.textContent = 'ไอ้เนม! มึงยังไม่ได้ใส่ LIFF ID หรือข้อมูล Supabase เลย! ไปแก้ในโค้ดก่อน!';
+            statusMessage.textContent = 'กรุณาตั้งค่า LIFF ID และข้อมูล Supabase ในโค้ดก่อนใช้งานครับ';
             statusMessage.classList.add('text-red-500', 'font-bold');
         } else {
              // สร้าง Supabase client
@@ -92,30 +92,27 @@
                 await liff.init({ liffId: MY_LIFF_ID });
 
                 if (!liff.isLoggedIn()) {
-                    statusMessage.textContent = 'ยังไม่ได้ล็อกอิน, กำลังจะพาไปหน้าล็อกอิน...';
-                    liff.login(); // ถ้ายังไม่ล็อกอิน มันจะเด้งไปหน้าล็อกอินให้เอง
-                    return; // หยุดทำงานตรงนี้ รอให้มัน redirect กลับมาใหม่
+                    statusMessage.textContent = 'ผู้ใช้ยังไม่ได้ล็อกอิน, กำลังเปลี่ยนเส้นทาง...';
+                    liff.login();
+                    return;
                 }
                 
-                statusMessage.textContent = 'ล็อกอินแล้ว, กำลังดึงข้อมูลโปรไฟล์...';
+                statusMessage.textContent = 'ล็อกอินสำเร็จ, กำลังดึงข้อมูลโปรไฟล์...';
                 const userProfile = await liff.getProfile();
                 
-                // เอารูป ชื่อ และ ID มาแสดงผล
                 document.getElementById('profilePicture').src = userProfile.pictureUrl || 'https://placehold.co/128x128/e2e8f0/adb5bd?text=No+Image';
                 document.getElementById('displayName').textContent = userProfile.displayName;
                 document.getElementById('userId').textContent = userProfile.userId;
 
-                // ซ่อนหน้า loading แล้วแสดงหน้าโปรไฟล์
                 loadingState.classList.add('hidden');
                 profileState.classList.remove('hidden');
 
-                // --- ตั้งค่าปุ่มต่างๆ ---
+                // --- ตั้งค่าการทำงานของปุ่ม ---
 
                 // 1. ปุ่มบันทึกข้อมูล
                 document.getElementById('saveProfileBtn').addEventListener('click', async () => {
-                    alert('กำลังจะส่งข้อมูลไป Supabase...');
+                    alert('กำลังส่งข้อมูลไปยัง Supabase...');
                     try {
-                        // เรียก Edge Function ชื่อ 'save-user-data' ที่มึงสร้างไว้
                         const { data, error } = await supabaseClient.functions.invoke('save-user-data', {
                             body: { 
                                 lineUserId: userProfile.userId,
@@ -124,40 +121,40 @@
                             }
                         });
 
-                        if (error) throw error; // ถ้ามี error ให้โยนไปที่ catch
+                        if (error) throw error;
 
                         console.log('Success! Supabase function response:', data);
-                        alert('บันทึกข้อมูลสำเร็จแล้วโว้ย!');
+                        alert('บันทึกข้อมูลสำเร็จ');
 
                     } catch (err) {
                         console.error('Error invoking Supabase function:', err);
-                        alert(`เกิดข้อผิดพลาดตอนเรียก Supabase ว่ะ: ${err.message}`);
+                        alert(`เกิดข้อผิดพลาดในการเชื่อมต่อ Supabase: ${err.message}`);
                     }
                 });
                 
-                // 2. ปุ่มส่งข้อความ (จะกดได้ก็ต่อเมื่อเปิดในแอป LINE)
+                // 2. ปุ่มส่งข้อความ
                 const sendMessageBtn = document.getElementById('sendMessageBtn');
                 if (liff.isInClient()) {
                     sendMessageBtn.addEventListener('click', () => {
-                        liff.sendMessages([{ type: 'text', text: `หวัดดี! กูชื่อ ${userProfile.displayName}` }])
+                        liff.sendMessages([{ type: 'text', text: `สวัสดีครับ, ผมชื่อ ${userProfile.displayName}` }])
                         .then(() => { 
-                            alert('ส่งข้อความแล้ว!');
+                            alert('ส่งข้อความเรียบร้อย');
                             liff.closeWindow(); 
                         })
                         .catch((err) => {
                             console.error('Error sending message:', err);
-                            alert('เกิดข้อผิดพลาดตอนส่งข้อความว่ะ');
+                            alert('เกิดข้อผิดพลาดในการส่งข้อความ');
                         });
                     });
                 } else {
                     sendMessageBtn.disabled = true;
                     sendMessageBtn.classList.replace('bg-green-500', 'bg-gray-400');
-                    sendMessageBtn.textContent = 'เปิดใน LINE ถึงจะส่งได้';
+                    sendMessageBtn.textContent = 'สามารถส่งข้อความได้เมื่อเปิดใน LINE';
                 }
 
             } catch (error) {
                 console.error('LIFF/Main Process Failed:', error);
-                statusMessage.textContent = `ฉิบหายแล้ว! เกิดข้อผิดพลาด: ${error.message}`;
+                statusMessage.textContent = `เกิดข้อผิดพลาด: ${error.message}`;
                 statusMessage.classList.add('text-red-500', 'font-bold');
             }
         }
