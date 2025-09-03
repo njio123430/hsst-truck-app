@@ -28,7 +28,7 @@
 </head>
 <body class="bg-gray-200">
 
-    <div id="app" class="w-full max-w-lg mx-auto bg-gray-100 min-h-screen">
+    <div id="app" class="w-full max-w-lg mx-auto bg-gray-100 min-h-screen flex flex-col">
         
         <div id="header" class="bg-white p-4 shadow-md text-center hidden">
             <p class="text-sm text-gray-500">ผู้ใช้งาน</p>
@@ -78,6 +78,12 @@
                 <p id="log-message" class="text-gray-600 text-sm">ยังไม่มีการดำเนินการ</p>
             </div>
         </div>
+        
+        <!-- >>>>> FOOTER ที่มึงขอ <<<<< -->
+        <footer id="footer" class="text-center py-4 mt-auto hidden">
+            <p class="text-xs text-gray-500">HSST System &copy; 2025</p>
+        </footer>
+
     </div>
 
     <!-- >>>>> หน้าต่างสำหรับสแกนเนอร์ <<<<< -->
@@ -94,7 +100,7 @@
         // ******** กรุณากรอกข้อมูลของคุณ ********
         const MY_LIFF_ID = '2008034667-YqmOVd9a'; 
         const SUPABASE_URL = 'https://ykctcctxpxvqveevvwdi.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrY3RjY3R4cHh2cXZlZXZ2d2RpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4MDA0NjEsImV4cCI6MjA3MjM3NjQ2MX0.FdaFL3dcbsnXAzskOWGtJ3o7qqdQk1jE4m70lROHYY';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrY3RjY3R4cHh2cXZlZXZ2d2RpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4MDA0NjEsImV4cCI6MjA3MjM3NjQzMX0.9Fw3sA6p9a-1Zz2bXyY4E_aB7C6d9fG0H8jK1lP4o3c';
         // ************************************
 
         // --- UI Elements ---
@@ -102,6 +108,7 @@
         const statusMessage = document.getElementById('status-message');
         const header = document.getElementById('header');
         const mainContent = document.getElementById('main-content');
+        const footer = document.getElementById('footer'); // เพิ่มตัวแปร footer
         const logMessage = document.getElementById('log-message');
         const plateInput = document.getElementById('plate-input');
         const reserveInput = document.getElementById('reserve-input');
@@ -137,6 +144,7 @@
             loadingState.classList.add('hidden');
             header.classList.remove('hidden');
             mainContent.classList.remove('hidden');
+            footer.classList.remove('hidden'); // แสดง footer
             updateLog('ระบบพร้อมใช้งาน');
         }
         
@@ -161,6 +169,7 @@
             currentTargetInput = targetInput;
             mainContent.classList.add('hidden');
             header.classList.add('hidden');
+            footer.classList.add('hidden'); // ซ่อน footer ตอนสแกน
             scannerContainer.classList.remove('hidden');
 
             html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
@@ -176,6 +185,7 @@
                 scannerContainer.classList.add('hidden');
                 mainContent.classList.remove('hidden');
                 header.classList.remove('hidden');
+                footer.classList.remove('hidden'); // แสดง footer กลับมา
             }).catch(err => {
                 console.error("ไม่สามารถหยุดสแกนเนอร์ได้", err);
             });
