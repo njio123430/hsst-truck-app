@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- >>>>> อาวุธใหม่! เครื่องสแกนบาร์โค้ดระดับโปร <<<<< -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <style>
         body { font-family: sans-serif; }
         .btn { transition: transform 0.1s ease-in-out, background-color 0.2s ease; }
@@ -14,6 +16,14 @@
         .input-group { display: flex; align-items: center; gap: 0.5rem; }
         .input-field { flex-grow: 1; }
         .scan-btn { flex-shrink: 0; }
+        /* สไตล์สำหรับกล้องสแกน */
+        #scanner-container {
+            transition: opacity 0.3s ease-in-out;
+        }
+        #reader {
+            border: 4px solid white;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body class="bg-gray-200">
@@ -41,7 +51,7 @@
                     <div class="input-group">
                         <input type="text" id="reserve-input" class="input-field w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg" placeholder="กรอกหรือสแกน">
                         <button id="scan-reserve-btn" class="scan-btn btn bg-gray-600 hover:bg-gray-700 text-white font-bold p-3 rounded-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                         </button>
                     </div>
                 </div>
@@ -52,7 +62,7 @@
                     <div class="input-group">
                         <input type="text" id="plate-input" class="input-field w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg" placeholder="กรอกหรือสแกน">
                         <button id="scan-plate-btn" class="scan-btn btn bg-gray-600 hover:bg-gray-700 text-white font-bold p-3 rounded-md">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                         </button>
                     </div>
                 </div>
@@ -64,17 +74,27 @@
             </div>
 
             <div id="status-log" class="mt-4 text-left bg-white p-3 rounded-lg shadow-sm">
-                 <p class="font-semibold text-sm mb-1">สถานะล่าสุด:</p>
-                 <p id="log-message" class="text-gray-600 text-sm">ยังไม่มีการดำเนินการ</p>
+                <p class="font-semibold text-sm mb-1">สถานะล่าสุด:</p>
+                <p id="log-message" class="text-gray-600 text-sm">ยังไม่มีการดำเนินการ</p>
             </div>
         </div>
     </div>
+
+    <!-- >>>>> หน้าต่างสำหรับสแกนเนอร์ <<<<< -->
+    <div id="scanner-container" class="fixed inset-0 bg-black bg-opacity-90 flex-col items-center justify-center hidden z-50 p-4">
+        <p class="text-white text-lg font-semibold mb-4">วางบาร์โค้ดให้อยู่ในกรอบ</p>
+        <div id="reader" class="w-full max-w-sm"></div>
+        <button id="close-scanner-btn" class="btn mt-6 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg text-lg">
+            ยกเลิก
+        </button>
+    </div>
+
 
     <script>
         // ******** กรุณากรอกข้อมูลของคุณ ********
         const MY_LIFF_ID = '2008034667-YqmOVd9a'; 
         const SUPABASE_URL = 'https://ykctcctxpxvqveevvwdi.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrY3RjY3R4cHh2cXZlZXZ2d2RpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4MDA0NjEsImV4cCI6MjA3MjM3NjQ2MX0.FdaFL3dcbsnXAzskOWGtJ3o7qqdQk1jE4Ym70lROHYY';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrY3RjY3R4cHh2cXZlZXZ2d2RpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4MDA0NjEsImV4cCI6MjA3MjM3NjQ2MX0.FdaFL3dcbsnXAzskOWGtJ3o7qqdQk1jE4m70lROHYY';
         // ************************************
 
         // --- UI Elements ---
@@ -85,9 +105,13 @@
         const logMessage = document.getElementById('log-message');
         const plateInput = document.getElementById('plate-input');
         const reserveInput = document.getElementById('reserve-input');
+        const scannerContainer = document.getElementById('scanner-container');
+        const closeScannerBtn = document.getElementById('close-scanner-btn');
         
         let userProfile = null;
+        let currentTargetInput = null; // ตัวแปรสำหรับเก็บว่าจะเอาข้อมูลไปใส่ช่องไหน
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const html5QrCode = new Html5Qrcode("reader");
 
         document.addEventListener('DOMContentLoaded', main);
 
@@ -122,30 +146,45 @@
             logMessage.classList.toggle('text-green-600', !isError);
         }
 
-        async function scanAndFill(targetInput) {
-            if (!liff.isInClient()) {
-                alert("ฟังก์ชันสแกนสามารถใช้งานได้เมื่อเปิดผ่านแอปพลิเคชัน LINE เท่านั้น");
-                targetInput.value = "TEST_FROM_BROWSER";
-                return;
+        // --- NEW SCANNER LOGIC ---
+        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+            if (currentTargetInput) {
+                currentTargetInput.value = decodedText;
+                updateLog(`สแกนข้อมูล '${decodedText}' สำเร็จ`);
             }
-            try {
-                updateLog('กำลังเปิดกล้อง...');
-                const result = await liff.scanCodeV2();
-                if (result && result.value) {
-                    targetInput.value = result.value;
-                    updateLog(`สแกนข้อมูล '${result.value}' สำเร็จ`);
-                } else {
-                    updateLog('ยกเลิกการสแกน');
-                }
-            } catch (error) {
-                console.error('Scan Error:', error);
-                updateLog(`เกิดข้อผิดพลาดในการสแกน: ${error.message}`, true);
-            }
+            stopScanner();
+        };
+
+        const config = { fps: 10, qrbox: { width: 280, height: 150 } };
+
+        function startScanner(targetInput) {
+            currentTargetInput = targetInput;
+            mainContent.classList.add('hidden');
+            header.classList.add('hidden');
+            scannerContainer.classList.remove('hidden');
+
+            html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
+            .catch(err => {
+                console.error("ไม่สามารถเริ่มสแกนได้", err);
+                updateLog(`ไม่สามารถเปิดกล้องได้: ${err}`, true);
+                stopScanner();
+            });
+        }
+
+        function stopScanner() {
+             html5QrCode.stop().then(ignore => {
+                scannerContainer.classList.add('hidden');
+                mainContent.classList.remove('hidden');
+                header.classList.remove('hidden');
+            }).catch(err => {
+                console.error("ไม่สามารถหยุดสแกนเนอร์ได้", err);
+            });
         }
 
         function setupEventListeners() {
-            document.getElementById('scan-reserve-btn').addEventListener('click', () => scanAndFill(reserveInput));
-            document.getElementById('scan-plate-btn').addEventListener('click', () => scanAndFill(plateInput));
+            document.getElementById('scan-reserve-btn').addEventListener('click', () => startScanner(reserveInput));
+            document.getElementById('scan-plate-btn').addEventListener('click', () => startScanner(plateInput));
+            closeScannerBtn.addEventListener('click', stopScanner);
 
             document.getElementById('save-btn').addEventListener('click', async () => {
                 const plateValue = plateInput.value.trim();
@@ -185,6 +224,4 @@
     </script>
 </body>
 </html>
-
-
 
