@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- >>>>> อาวุธใหม่! เครื่องสแกนบาร์โค้ดระดับโปร <<<<< -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <style>
         body { font-family: sans-serif; }
@@ -16,7 +15,6 @@
         .input-group { display: flex; align-items: center; gap: 0.5rem; }
         .input-field { flex-grow: 1; }
         .scan-btn { flex-shrink: 0; }
-        /* สไตล์สำหรับกล้องสแกน */
         #scanner-container {
             transition: opacity 0.3s ease-in-out;
         }
@@ -45,9 +43,8 @@
 
         <div id="main-content" class="hidden p-4 md:p-6">
             <div class="bg-white p-6 rounded-lg shadow-md space-y-5">
-                <!-- 1. & 2. Input and Scan for Reserve Truck -->
                 <div>
-                    <label for="reserve-input" class="block text-sm font-medium text-gray-700 mb-1">เลขรถ (ข้อมูลการจอง)</label>
+                    <label for="reserve-input" class="block text-sm font-medium text-gray-700 mb-1">เลขจองรถ / Reserve No Truck </label>
                     <div class="input-group">
                         <input type="text" id="reserve-input" class="input-field w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg" placeholder="กรอกหรือสแกน">
                         <button id="scan-reserve-btn" class="scan-btn btn bg-gray-600 hover:bg-gray-700 text-white font-bold p-3 rounded-md">
@@ -56,7 +53,6 @@
                     </div>
                 </div>
 
-                <!-- 3. & 4. Input and Scan for Plate -->
                 <div>
                     <label for="plate-input" class="block text-sm font-medium text-gray-700 mb-1">ทะเบียนรถ</label>
                     <div class="input-group">
@@ -67,7 +63,6 @@
                     </div>
                 </div>
 
-                <!-- 5. Save Button -->
                 <button id="save-btn" class="btn w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-4 rounded-lg shadow-xl text-xl mt-4">
                     ยืนยันข้อมูล
                 </button>
@@ -79,14 +74,12 @@
             </div>
         </div>
         
-        <!-- >>>>> FOOTER ที่มึงขอ <<<<< -->
         <footer id="footer" class="text-center py-4 mt-auto hidden">
             <p class="text-xs text-gray-500">HSST System &copy; 2025</p>
         </footer>
 
     </div>
 
-    <!-- >>>>> หน้าต่างสำหรับสแกนเนอร์ <<<<< -->
     <div id="scanner-container" class="fixed inset-0 bg-black bg-opacity-90 flex-col items-center justify-center hidden z-50 p-4">
         <p class="text-white text-lg font-semibold mb-4">วางบาร์โค้ดให้อยู่ในกรอบ</p>
         <div id="reader" class="w-full max-w-sm"></div>
@@ -97,10 +90,10 @@
 
 
     <script>
-        // ******** กรุณากรอกข้อมูลของคุณ ********
+        // ******** Edit********
         const MY_LIFF_ID = '2008034667-YqmOVd9a'; 
         const SUPABASE_URL = 'https://ykctcctxpxvqveevvwdi.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrY3RjY3R4cHh2cXZlZXZ2d2RpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4MDA0NjEsImV4cCI6MjA3MjM3NjQzMX0.9Fw3sA6p9a-1Zz2bXyY4E_aB7C6d9fG0H8jK1lP4o3c';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrY3RjY3R4cHh2cXZlZXZ2d2RpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4MDA0NjEsImV4cCI6MjA3MjM3NjQ2MX0.FdaFL3dcbsnXAzskOWGtJ3o7qqdQk1jE4Ym70lROHYY';
         // ************************************
 
         // --- UI Elements ---
@@ -108,7 +101,7 @@
         const statusMessage = document.getElementById('status-message');
         const header = document.getElementById('header');
         const mainContent = document.getElementById('main-content');
-        const footer = document.getElementById('footer'); // เพิ่มตัวแปร footer
+        const footer = document.getElementById('footer');
         const logMessage = document.getElementById('log-message');
         const plateInput = document.getElementById('plate-input');
         const reserveInput = document.getElementById('reserve-input');
@@ -116,7 +109,7 @@
         const closeScannerBtn = document.getElementById('close-scanner-btn');
         
         let userProfile = null;
-        let currentTargetInput = null; // ตัวแปรสำหรับเก็บว่าจะเอาข้อมูลไปใส่ช่องไหน
+        let currentTargetInput = null; 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const html5QrCode = new Html5Qrcode("reader");
 
@@ -144,7 +137,7 @@
             loadingState.classList.add('hidden');
             header.classList.remove('hidden');
             mainContent.classList.remove('hidden');
-            footer.classList.remove('hidden'); // แสดง footer
+            footer.classList.remove('hidden');
             updateLog('ระบบพร้อมใช้งาน');
         }
         
@@ -169,7 +162,7 @@
             currentTargetInput = targetInput;
             mainContent.classList.add('hidden');
             header.classList.add('hidden');
-            footer.classList.add('hidden'); // ซ่อน footer ตอนสแกน
+            footer.classList.add('hidden'); 
             scannerContainer.classList.remove('hidden');
 
             html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
@@ -185,7 +178,7 @@
                 scannerContainer.classList.add('hidden');
                 mainContent.classList.remove('hidden');
                 header.classList.remove('hidden');
-                footer.classList.remove('hidden'); // แสดง footer กลับมา
+                footer.classList.remove('hidden');
             }).catch(err => {
                 console.error("ไม่สามารถหยุดสแกนเนอร์ได้", err);
             });
@@ -234,4 +227,5 @@
     </script>
 </body>
 </html>
+
 
